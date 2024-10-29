@@ -1,0 +1,41 @@
+name: Deploy MERN App
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+
+      - name: Install backend dependencies
+        run: |
+          cd backend
+          npm install
+
+      - name: Build frontend
+        run: |
+          cd frontend
+          npm install
+          npm run build
+
+      - name: Deploy to Server
+        env:
+          SSH_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          USER: ${{ secrets.SERVER_USER }}
+          IP: ${{ secrets.SERVER_IP }}
+        run: |
+          echo "$SSH_PRIVATE_KEY" > private_key
+          chmod 600 private_key
+          scp -i private_key -r ./frontend/build $SERVER_USER@$SERVER_IP:/var/www/html
+          scp -i private_key -r ./backend $SERVER_USER@$SERVER_IP:/var/www/backend
+          ssh -i private_key $SERVER_USER@$SERVER_IP 'pm2 restart backend' # assuming pm2 is used for process management
