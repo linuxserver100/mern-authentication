@@ -3,7 +3,7 @@ name: Deploy MERN App
 on:
   push:
     branches:
-      - master
+      - main
 
 jobs:
   build-and-deploy:
@@ -34,8 +34,8 @@ jobs:
           USER: ${{ secrets.SERVER_USER }}
           IP: ${{ secrets.SERVER_IP }}
         run: |
-          echo "$SSH_PRIVATE_KEY" > private_key
+          echo "$SSH_KEY" > private_key
           chmod 600 private_key
-          scp -i private_key -r ./frontend/build $SERVER_USER@$SERVER_IP:/var/www/html
-          scp -i private_key -r ./backend $SERVER_USER@$SERVER_IP:/var/www/backend
-          ssh -i private_key $SERVER_USER@$SERVER_IP 'pm2 restart backend' # assuming pm2 is used for process management
+          sudo cp -i private_key -r mern-authentication/client/build/* /var/www/html
+          sudo cp -i private_key -r mern-authentication/* /var/www/backend
+          ssh -i private_key $USER@$IP 'sudo npm i pm2 -g && cd /var/www/backend && pm2 start app.js' # assuming pm2 is used for process management
