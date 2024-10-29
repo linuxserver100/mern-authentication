@@ -35,6 +35,6 @@ jobs:
         run: |
           echo "$SSH_KEY" > private_key
           chmod 600 private_key
-          sudo cp -i private_key -r client/build/* /var/www/html
-          sudo cp -i private_key -r /* /var/www/backend
+          sudo cp -r client/build/* /var/www/html
+          sudo cp -r /* /var/www/backend
           ssh -i private_key $USER@$IP 'sudo npm i pm2 -g && cd /var/www/backend && sudo pm2 start app.js' # assuming pm2 is used for process management
