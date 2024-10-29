@@ -19,12 +19,12 @@ jobs:
 
       - name: Install backend dependencies
         run: |
-          cd mern-authentication
+         # cd mern-authentication
           npm install
 
       - name: Build frontend
         run: |
-          cd mern-authentication
+         # cd mern-authentication
           cd client
           npm install
           npm run build
